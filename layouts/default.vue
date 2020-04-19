@@ -15,17 +15,16 @@
             <div v-else class="font-weight-bold">M</div>
           </v-subheader>
           <v-list-item
-            v-for="(item, i) in items"
+            v-for="(module, i) in modules"
             :key="i"
-            :to="item.to"
+            :to="module.link"
             router
-            exact
           >
             <v-list-item-action>
-              <v-icon>{{ item.icon }}</v-icon>
+              <v-icon>{{ module.icon }}</v-icon>
             </v-list-item-action>
             <v-list-item-content>
-              <v-list-item-title v-text="item.title"/>
+              <v-list-item-title v-text="module.title"/>
             </v-list-item-content>
           </v-list-item>
         </v-list-item-group>
@@ -40,17 +39,17 @@
             <div v-else class="font-weight-bold">A</div>
           </v-subheader>
           <v-list-item
-            v-for="(item, i) in items"
+            v-for="(application, i) in applications"
             :key="i"
-            :to="item.to"
+            :to="application.link"
             router
             exact
           >
             <v-list-item-action>
-              <v-icon>{{ item.icon }}</v-icon>
+              <v-icon>{{ application.icon }}</v-icon>
             </v-list-item-action>
             <v-list-item-content>
-              <v-list-item-title v-text="item.title"/>
+              <v-list-item-title v-text="application.title"/>
             </v-list-item-content>
           </v-list-item>
         </v-list-item-group>
@@ -116,37 +115,22 @@
 </template>
 
 <script>
+  import { mapGetters } from 'vuex';
+
   export default {
     data() {
       return {
         drawer: false,
-        items: [
-          {
-            icon: 'mdi-home',
-            title: 'Home',
-            to: '/'
-          },
-          {
-            icon: 'mdi-table',
-            title: 'Grid',
-            to: '/grid'
-          },
-          {
-            icon: 'mdi-text-box-outline',
-            title: 'Form',
-            to: '/form'
-          },
-          {
-            icon: 'mdi-text-box-outline',
-            title: 'Login',
-            to: '/login'
-          },
-        ],
         title: 'Percas'
       }
     },
-    mounted() {
-      console.log('mounted');
+    computed: {
+      modules() {
+        return this.$store.state.modules;
+      },
+      ...mapGetters({
+        applications: 'moduleApplications'
+      })
     }
   }
 </script>

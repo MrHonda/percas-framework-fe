@@ -1,4 +1,5 @@
-import colors from 'vuetify/es5/util/colors'
+import colors from 'vuetify/es5/util/colors';
+import webpack from 'webpack';
 require('dotenv').config();
 
 export default {
@@ -54,7 +55,8 @@ export default {
   ** See https://axios.nuxtjs.org/options
   */
   axios: {
-    baseURL: process.env.API_URL
+    baseURL: process.env.API_URL,
+    credentials: true
   },
   /*
   ** vuetify module configuration
@@ -85,9 +87,14 @@ export default {
     ** You can extend webpack config here
     */
     extend (config, ctx) {
-    }
+    },
+    plugins: [
+      new webpack.ProvidePlugin({
+        '_': 'lodash'
+      })
+    ]
   },
   router: {
-    middleware: 'auth'
+    middleware: 'router'
   }
 }

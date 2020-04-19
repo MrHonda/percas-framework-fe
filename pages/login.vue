@@ -57,15 +57,15 @@
     data() {
       return {
         securityApi: new SecurityApi(this.$axios),
-        username: '',
-        password: ''
+        username: 'david',
+        password: 'david'
       };
     },
     methods: {
       async submit() {
         this.securityApi.login(this.username, this.password)
           .then(response => {
-            console.log(response);
+            console.log(response.headers);
           })
           .catch(error => {
             console.log(error.response);
