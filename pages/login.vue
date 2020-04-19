@@ -12,7 +12,7 @@
         <v-col>
           <v-card class="elevation-12">
             <v-card-text>
-              <v-form>
+              <v-form @keyup.native.enter="submit">
                 <v-text-field
                   outlined
                   label="Login"
@@ -21,6 +21,7 @@
                   prepend-inner-icon="mdi-account"
                   dense
                   type="text"
+                  v-model="username"
                 />
                 <v-text-field
                   outlined
@@ -30,13 +31,15 @@
                   prepend-inner-icon="mdi-lock"
                   dense
                   type="password"
+                  v-model="password"
                 />
               </v-form>
             </v-card-text>
             <v-card-actions>
               <v-spacer/>
-              <v-btn color="primary">
-                <v-icon left>mdi-login</v-icon> Login
+              <v-btn color="primary" @click="submit">
+                <v-icon left>mdi-login</v-icon>
+                Login
               </v-btn>
             </v-card-actions>
           </v-card>
@@ -47,8 +50,28 @@
 </template>
 
 <script>
+  import SecurityApi from '@/api/security.api';
+
   export default {
-    layout: 'empty'
+    layout: 'empty',
+    data() {
+      return {
+        securityApi: new SecurityApi(this.$axios),
+        username: '',
+        password: ''
+      };
+    },
+    methods: {
+      async submit() {
+        this.securityApi.login(this.username, this.password)
+          .then(response => {
+            console.log(response);
+          })
+          .catch(error => {
+            console.log(error.response);
+          });
+      },
+    }
   }
 </script>
 

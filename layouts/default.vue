@@ -136,9 +136,17 @@
             title: 'Form',
             to: '/form'
           },
+          {
+            icon: 'mdi-text-box-outline',
+            title: 'Login',
+            to: '/login'
+          },
         ],
         title: 'Percas'
       }
     },
+    mounted() {
+      console.log('mounted');
+    }
   }
 </script>
