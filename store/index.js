@@ -59,7 +59,7 @@ export const actions = {
 
     context.commit('initialize', payload);
   },
-  setActiveModuleAndApplicationLink({commit, state}, link) {
+  setActiveModuleAndApplicationByLink({commit, state}, link) {
     const pathParts = _.trim(link, '/').split('/');
     console.log(pathParts);
 

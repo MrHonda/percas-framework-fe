@@ -1,3 +1,3 @@
 export default function (context) {
-  context.store.dispatch('setActiveModuleAndApplicationLink', context.route.path);
+  context.store.dispatch('setActiveModuleAndApplicationByLink', context.route.path);
 }
