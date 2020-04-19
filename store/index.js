@@ -11,7 +11,7 @@ export const mutations = {
     context.modules = modules;
     context.applications = applications;
   },
-  setActiveModuleAndApplicationLink(context, {module, application}) {
+  setPageDataByLink(context, {module, application}) {
     context.currentModule = module;
     context.currentApplication = application;
   }
@@ -59,7 +59,7 @@ export const actions = {
 
     context.commit('initialize', payload);
   },
-  setActiveModuleAndApplicationByLink({commit, state}, link) {
+  setPageDataByLink({commit, state}, link) {
     const pathParts = _.trim(link, '/').split('/');
     console.log(pathParts);
 
@@ -77,7 +77,7 @@ export const actions = {
           payload.application = state.applications[pathParts[0]][pathParts[1]];
         }
       }
-      commit('setActiveModuleAndApplicationLink', payload);
+      commit('setPageDataByLink', payload);
     }
 
   }
