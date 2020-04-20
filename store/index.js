@@ -61,7 +61,7 @@ export const actions = {
   },
   setPageDataByLink({commit, state}, link) {
     const pathParts = _.trim(link, '/').split('/');
-    console.log(pathParts);
+    // console.log(pathParts);
 
     const payload = {
         module: null,
