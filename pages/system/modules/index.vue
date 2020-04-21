@@ -1,26 +1,10 @@
 <template>
   <div>
-  <Grid
-    v-bind="grid"
-    v-on:rowAction="onRowAction"
-    v-on:globalAction="onGlobalAction"
-  />
-    <v-dialog v-model="dialog" max-width="600px">
-      <v-card>
-        <v-card-title>
-          <span class="headline">User Profile</span>
-        </v-card-title>
-        <v-card-text>
-          <v-container>
-            <v-row>
-              <v-col cols="12" sm="6" md="4">
-                <h1>{{rowId}}</h1>
-              </v-col>
-            </v-row>
-          </v-container>
-        </v-card-text>
-      </v-card>
-    </v-dialog>
+    <Grid
+      v-bind="grid"
+      v-on:rowAction="onRowAction"
+      v-on:gridAction="onGridAction"
+    />
   </div>
 </template>
 
@@ -32,49 +16,46 @@
     data() {
       return {
         grid: {
+          title: 'Modules',
           headers: [
-            {text: 'Desert', sortable: true, value: 'name'},
-            {text: 'Calories', value: 'calories'},
-            {text: 'Fat (g)', value: 'fat'},
-            {text: 'Carbs (g)', value: 'carbs'},
-            {text: 'Protein (g)', value: 'protein'},
-            {text: 'Iron (%)', value: 'iron'},
-            {text: '', value: 'actions'}
+            {key: 'id', text: 'Id', width: '120px', sortable: true},
+            {key: 'name', text: 'Name', width: 'auto', sortable: true},
+            {key: 'link', text: 'Link', width: 'auto', sortable: true},
+            {key: 'actions', text: '&nbsp;', width: '100px', sortable: true},
           ],
           rows: [
             {
               id: 1,
-              name: 'Frozen Yogurt',
-              calories: 159,
-              fat: 6.0,
-              carbs: 24,
-              protein: 4.0,
-              iron: '1%',
-            },
-            {
-              id: 2,
-              name: 'Ice cream sandwich',
-              calories: 237,
-              fat: 9.0,
-              carbs: 37,
-              protein: 4.3,
-              iron: '1%',
-            },
+              columns: [
+                {key: 'id', type: 'id', value: 1},
+                {key: 'name', type: 'text', value: 'System'},
+                {key: 'link', type: 'link', value: '/system'},
+                {
+                  key: 'actions', type: 'actions', align: 'center', value: [
+                    {key: 'edit', icon: 'mdi-pencil', text: 'Edit'}
+                  ]
+                }
+              ],
+            }
           ],
+          pagination: {
+            rowsPerPage: 10,
+            currentPage: 1,
+            rowsCount: 1
+          },
+          gridActions: [
+            {key: 'add', icon: 'mdi-plus', text: 'Add', color: 'success'},
+            {key: 'refresh', icon: 'mdi-refresh', text: 'Refresh', color: 'primary'},
+          ]
         },
-        dialog: false,
-        rowId: 0,
       }
     },
     methods: {
       onRowAction({action, id}) {
-        if(action === 'edit') {
-          this.rowId = id;
-          this.dialog = true;
-        }
+        console.log('onRowAction: ' + action + ' - ' + id);
       },
-      onGlobalAction({action, data}) {
-        console.log(action, data);
+      onGridAction({action}) {
+        console.log('onGridAction: ' + action);
       }
     }
   }
