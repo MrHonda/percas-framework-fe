@@ -6,7 +6,6 @@
     :items-per-page="pagination.rowsPerPage"
     :server-items-length="pagination.rowsCount"
     :page="pagination.currentPage"
-    show-select
   >
     <template v-slot:top>
       <div class="d-flex">
@@ -29,90 +28,91 @@
               <div>{{action.text}}</div>
             </v-tooltip>
           </template>
-<!--          <v-menu-->
-<!--            offset-x-->
-<!--            left-->
-<!--          >-->
-<!--            <template v-slot:activator="{ on }">-->
-<!--              <v-btn text outlined v-on="on">-->
-<!--                <v-icon>mdi-dots-vertical</v-icon>-->
-<!--              </v-btn>-->
-<!--            </template>-->
-<!--            <v-list>-->
-<!--              <v-list-item link>-->
-<!--                <v-list-item-icon>-->
-<!--                  <v-icon>mdi-pencil</v-icon>-->
-<!--                </v-list-item-icon>-->
-<!--                <v-list-item-content>-->
-<!--                  <v-list-item-title>Edit selected</v-list-item-title>-->
-<!--                </v-list-item-content>-->
-<!--              </v-list-item>-->
-<!--              <v-list-item link>-->
-<!--                <v-list-item-icon>-->
-<!--                  <v-icon>mdi-delete</v-icon>-->
-<!--                </v-list-item-icon>-->
-<!--                <v-list-item-content>-->
-<!--                  <v-list-item-title>Delete selected</v-list-item-title>-->
-<!--                </v-list-item-content>-->
-<!--              </v-list-item>-->
-<!--            </v-list>-->
-<!--          </v-menu>-->
+          <!--          <v-menu-->
+          <!--            offset-x-->
+          <!--            left-->
+          <!--          >-->
+          <!--            <template v-slot:activator="{ on }">-->
+          <!--              <v-btn text outlined v-on="on">-->
+          <!--                <v-icon>mdi-dots-vertical</v-icon>-->
+          <!--              </v-btn>-->
+          <!--            </template>-->
+          <!--            <v-list>-->
+          <!--              <v-list-item link>-->
+          <!--                <v-list-item-icon>-->
+          <!--                  <v-icon>mdi-pencil</v-icon>-->
+          <!--                </v-list-item-icon>-->
+          <!--                <v-list-item-content>-->
+          <!--                  <v-list-item-title>Edit selected</v-list-item-title>-->
+          <!--                </v-list-item-content>-->
+          <!--              </v-list-item>-->
+          <!--              <v-list-item link>-->
+          <!--                <v-list-item-icon>-->
+          <!--                  <v-icon>mdi-delete</v-icon>-->
+          <!--                </v-list-item-icon>-->
+          <!--                <v-list-item-content>-->
+          <!--                  <v-list-item-title>Delete selected</v-list-item-title>-->
+          <!--                </v-list-item-content>-->
+          <!--              </v-list-item>-->
+          <!--            </v-list>-->
+          <!--          </v-menu>-->
         </div>
       </div>
     </template>
     <template v-slot:header="{ props: { headers } }">
       <thead>
       <tr>
-        <th v-for="header in headers" :key="header.key" :style="{width: header.width, minWidth: header.width, textAlign: header.align}">
-          <div class="d-flex align-center" :style="{maxWidth: header.width}">
-            <div class="d-flex flex-grow-1">
+        <th v-for="header in headers" :key="header.key"
+            :style="{width: header.width, minWidth: header.width, textAlign: header.align}">
+          <div class="d-flex align-center text-truncate" :style="{maxWidth: header.width}">
+            <div class="d-flex flex-grow-1 text-truncate">
               <div class="mr-2 text-truncate align-self-center">
                 <div class="subtitle-2 text-truncate" v-html="header.text"></div>
-                <div class="font-weight-regular text-truncate"></div>
+                <div class="font-weight-regular text-truncate" v-text="getFilterValues(header.filters)"></div>
               </div>
-<!--              <div v-if="header.sortable" class="sort-icons">-->
-<!--                <div>-->
-<!--                  <v-btn icon x-small>-->
-<!--                    <v-icon size="20">mdi-chevron-up</v-icon>-->
-<!--                  </v-btn>-->
-<!--                </div>-->
-<!--                <div>-->
-<!--                  <v-btn icon x-small>-->
-<!--                    <v-icon size="20">mdi-chevron-down</v-icon>-->
-<!--                  </v-btn>-->
-<!--                </div>-->
-<!--              </div>-->
+              <div v-if="header.sortable" class="sort-icons">
+                <div>
+                  <v-btn icon x-small :class="{active: isSortedBy(header.key, 'asc')}" @click="applySort(header.key, 'asc')">
+                    <v-icon size="20">mdi-chevron-up</v-icon>
+                  </v-btn>
+                </div>
+                <div>
+                  <v-btn icon x-small :class="{active: isSortedBy(header.key, 'desc')}" @click="applySort(header.key, 'desc')">
+                    <v-icon size="20">mdi-chevron-down</v-icon>
+                  </v-btn>
+                </div>
+              </div>
             </div>
-<!--            <div>-->
-<!--              <v-menu-->
-<!--                :close-on-content-click="false"-->
-<!--                offset-x-->
-<!--                left-->
-<!--              >-->
-<!--                <template v-slot:activator="{ on }">-->
-<!--                  <v-btn icon small v-on="on">-->
-<!--                    <v-icon size="20">mdi-filter</v-icon>-->
-<!--                  </v-btn>-->
-<!--                </template>-->
-<!--                <v-card>-->
-<!--                  <v-container>-->
-<!--                    <v-text-field outlined label="Filter" clearable dense>-->
-<!--                    </v-text-field>-->
-<!--                    <v-text-field outlined label="Filter" clearable dense>-->
-<!--                    </v-text-field>-->
-<!--                    <div class="text-center">-->
-<!--                      <v-btn color="primary">-->
-<!--                        Filter-->
-<!--                      </v-btn>-->
-<!--                      <v-btn text>-->
-<!--                        Clear-->
-<!--                      </v-btn>-->
-<!--                    </div>-->
-<!--                  </v-container>-->
-
-<!--                </v-card>-->
-<!--              </v-menu>-->
-<!--            </div>-->
+            <div v-if="header.filters && header.filters.length">
+              <v-menu
+                :close-on-content-click="false"
+                offset-x
+                left
+              >
+                <template v-slot:activator="{ on }">
+                  <v-btn icon small v-on="on">
+                    <v-icon size="20">mdi-filter</v-icon>
+                  </v-btn>
+                </template>
+                <v-card>
+                  <v-container>
+                    <template v-for="filter in header.filters">
+                      <v-text-field outlined :label="filter.text" clearable dense :key="filter.key"
+                                    v-model="filter.value" @keyup.enter="applyFilters">
+                      </v-text-field>
+                    </template>
+                    <div class="text-center">
+                      <v-btn color="primary" @click="applyFilters">
+                        Filter
+                      </v-btn>
+                      <v-btn text @click="clearFilters(header.filters)">
+                        Clear
+                      </v-btn>
+                    </div>
+                  </v-container>
+                </v-card>
+              </v-menu>
+            </div>
           </div>
         </th>
       </tr>
@@ -156,36 +156,6 @@
       </tr>
       </tbody>
     </template>
-<!--    <template v-slot:item.actions="{ item }">-->
-<!--      <v-menu-->
-<!--        offset-x-->
-<!--        left-->
-<!--      >-->
-<!--        <template v-slot:activator="{ on }">-->
-<!--          <v-btn text icon small v-on="on">-->
-<!--            <v-icon size="20">mdi-dots-vertical</v-icon>-->
-<!--          </v-btn>-->
-<!--        </template>-->
-<!--        <v-list>-->
-<!--          <v-list-item link @click="emitRowAction('edit', item.id)">-->
-<!--            <v-list-item-icon>-->
-<!--              <v-icon>mdi-pencil</v-icon>-->
-<!--            </v-list-item-icon>-->
-<!--            <v-list-item-content>-->
-<!--              <v-list-item-title>Edit</v-list-item-title>-->
-<!--            </v-list-item-content>-->
-<!--          </v-list-item>-->
-<!--          <v-list-item link>-->
-<!--            <v-list-item-icon>-->
-<!--              <v-icon>mdi-delete</v-icon>-->
-<!--            </v-list-item-icon>-->
-<!--            <v-list-item-content>-->
-<!--              <v-list-item-title>Delete</v-list-item-title>-->
-<!--            </v-list-item-content>-->
-<!--          </v-list-item>-->
-<!--        </v-list>-->
-<!--      </v-menu>-->
-<!--    </template>-->
   </v-data-table>
 </template>
 
@@ -205,6 +175,10 @@
         type: Array,
         required: true
       },
+      sort: {
+        type: Object,
+        required: true
+      },
       pagination: {
         type: Object,
         required: true
@@ -221,10 +195,44 @@
       },
       emitGridAction(action, data) {
         this.$emit('gridAction', {action, data});
+      },
+      isSortedBy(key, direction) {
+        return this.sort.key === key && this.sort.direction === direction;
+      },
+      applySort(key, direction) {
+        console.log('applySort: ' + key + '; ' + direction);
+      },
+      applyFilters() {
+        console.log('applyFilters');
+      },
+      clearFilters(filters) {
+        for (const filter of filters) {
+          filter.value = '';
+        }
+      },
+      getFilterValues(filters) {
+        if (!filters) {
+          return '';
+        }
+
+        const values = [];
+        for (const filter of filters) {
+          if (filter.value) {
+            values.push(filter.value);
+          }
+        }
+
+        return values.join(', ');
       }
     }
   }
 </script>
 
 <style scoped lang="scss">
+  .sort-icons {
+    .active {
+      color: white;
+      background-color: var(--v-primary-base);
+    }
+  }
 </style>
