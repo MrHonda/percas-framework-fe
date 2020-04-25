@@ -62,6 +62,10 @@
     <template v-slot:header="{ props: { headers } }">
       <thead>
       <tr>
+        <th v-if="options.selectable" style="width: 56px;">
+          <v-checkbox :indeterminate="partialRowsSelected" :input-value="allRowsSelected"
+                      @change="selectAllRows"></v-checkbox>
+        </th>
         <th v-for="header in headers" :key="header.key"
             :style="{width: header.width, minWidth: header.width, textAlign: header.align}">
           <div class="d-flex align-center text-truncate" :style="{maxWidth: header.width}">
@@ -72,12 +76,14 @@
               </div>
               <div v-if="header.sortable" class="sort-icons">
                 <div>
-                  <v-btn icon x-small :class="{active: isSortedBy(header.key, 'asc')}" @click="applySort(header.key, 'asc')">
+                  <v-btn icon x-small :class="{active: isSortedBy(header.key, 'asc')}"
+                         @click="applySort(header.key, 'asc')">
                     <v-icon size="20">mdi-chevron-up</v-icon>
                   </v-btn>
                 </div>
                 <div>
-                  <v-btn icon x-small :class="{active: isSortedBy(header.key, 'desc')}" @click="applySort(header.key, 'desc')">
+                  <v-btn icon x-small :class="{active: isSortedBy(header.key, 'desc')}"
+                         @click="applySort(header.key, 'desc')">
                     <v-icon size="20">mdi-chevron-down</v-icon>
                   </v-btn>
                 </div>
@@ -120,7 +126,10 @@
     </template>
     <template v-slot:body="{ items }">
       <tbody>
-      <tr v-for="row in items" :key="row.id">
+      <tr v-for="row in items" :key="row.id" :class="{'v-data-table__selected': selectedRows.includes(row.id)}">
+        <td v-if="options.selectable" style="width: 56px;">
+          <v-checkbox v-model="selectedRows" :value="row.id" multiple></v-checkbox>
+        </td>
         <td v-for="column in row.columns" :key="column.key" :style="{textAlign: column.align}">
           <template v-if="column.type === 'actions'">
             <v-menu
@@ -187,6 +196,24 @@
         type: Array,
         required: false,
         default: []
+      },
+      options: {
+        type: Object,
+        requred: false,
+        default: {}
+      }
+    },
+    data() {
+      return {
+        selectedRows: []
+      }
+    },
+    computed: {
+      partialRowsSelected() {
+        return this.selectedRows.length > 0 && this.selectedRows.length !== this.rows.length;
+      },
+      allRowsSelected() {
+        return this.selectedRows.length > 0 && this.selectedRows.length === this.rows.length;
       }
     },
     methods: {
@@ -223,6 +250,14 @@
         }
 
         return values.join(', ');
+      },
+      selectAllRows(val) {
+        this.selectedRows = [];
+        if (val) {
+          for (const row of this.rows) {
+            this.selectedRows.push(row.id);
+          }
+        }
       }
     }
   }

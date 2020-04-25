@@ -73,7 +73,10 @@
           gridActions: [
             {key: 'add', icon: 'mdi-plus', text: 'Add', color: 'success'},
             {key: 'refresh', icon: 'mdi-refresh', text: 'Refresh', color: 'primary'},
-          ]
+          ],
+          options: {
+            selectable: true
+          }
         },
       }
     },
