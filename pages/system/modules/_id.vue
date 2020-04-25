@@ -2,6 +2,7 @@
   <div>
     <Form
       v-bind="form"
+      v-on:action="onAction"
     />
   </div>
 </template>
@@ -42,6 +43,12 @@
             {name: 'close', icon: 'mdi-close', text: 'Close', color: '', style: {text: true}}
           ]
         }
+      }
+    },
+    methods: {
+      onAction({action, values}) {
+        console.log(action);
+        console.log(values);
       }
     }
   }

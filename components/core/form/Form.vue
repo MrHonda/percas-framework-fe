@@ -80,7 +80,18 @@
     },
     methods: {
       emitAction(action) {
-        console.log(action);
+        this.$emit('action', {action, values: this.getValues()});
+      },
+      getValues() {
+        const values = {};
+        for (const part in this.parts) {
+          for (const row of this.parts[part]) {
+            for (const field of row) {
+              values[field.name] = field.value;
+            }
+          }
+        }
+        return values;
       }
     }
   }
