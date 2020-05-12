@@ -1,7 +1,7 @@
 <template>
   <v-data-table
-    :headers="headers"
-    :items="rows"
+    :headers="grid.headers"
+    :items="grid.rows"
     hide-default-header
   >
     <template v-slot:header="{ props: { headers } }">
@@ -19,7 +19,7 @@
     <template v-slot:body="{ items }">
       <tbody>
       <tr
-        v-for="row in rows"
+        v-for="row in grid.rows"
         :key="row.id"
       >
         <template
@@ -44,40 +44,27 @@
   </v-data-table>
 </template>
 <script>
+  import GridApi from '@/api/grid.api';
+
   export default {
     name: 'Grid',
     data() {
       return {
-        headers: [],
-        rows: []
+        grid: {
+          headers: [],
+          rows: [],
+        },
+        api: null
       }
+    },
+    created() {
+      this.api = new GridApi(this.$axios, this.$router.currentRoute.path);
     },
     methods: {
       load() {
-        this.headers = [
-          {key: 'col1', text: 'Column 1'},
-          {key: 'col2', text: 'Column 2'},
-          {key: 'col3', text: 'Column 3'},
-        ];
-
-        this.rows = [];
-
-        for (let i = 1; i <= 5; i++) {
-          this.rows.push(
-            {
-              id: i,
-              columns: [
-                {key: 'col1', value: `Value ${i}.1`},
-                {key: 'col2', value: `Value ${i}.2`},
-                {key: 'col3', value: `Value ${i}.3`},
-              ],
-              actions: [
-                {key: 'edit', text: 'Edit'},
-                {key: 'delete', text: 'Delete'},
-              ]
-            }
-          )
-        }
+        this.api.load().then((result) => {
+          this.grid = result.data;
+        });
       }
     }
   }

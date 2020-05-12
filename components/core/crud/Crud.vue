@@ -55,7 +55,8 @@
       handleGridRowDeleteAction(id) {
         this.removeDialog.show()
           .then(() => {
-            this.modalForm.form.delete(id).then(() => {
+            this.modalForm.form.delete(id).then((result) => {
+              console.log(result);
               this.removeDialog.hide();
               this.$refs.grid.load();
             });
@@ -78,7 +79,8 @@
         }
       },
       handleFormSaveAction() {
-        this.modalForm.form.save().then(() => {
+        this.modalForm.form.save().then((result) => {
+          console.log(result);
           this.modalForm.hide();
           this.grid.load();
         });

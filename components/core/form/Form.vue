@@ -1,6 +1,6 @@
 <template>
   <v-form>
-    <template v-for="field in fields">
+    <template v-for="field in form.fields">
       <div>
         <div><label :for="field.name" v-text="field.text"></label></div>
         <input type="text" :key="field.name" v-model="field.value" :id="field.name">
@@ -8,7 +8,7 @@
     </template>
     <br>
     <div
-      v-for="action in actions"
+      v-for="action in form.actions"
       :key="action.name" v-text="action.text"
       @click="$emit('action', {action: action.name})"
     ></div>
@@ -16,43 +16,57 @@
 </template>
 
 <script>
+  import FormApi from '@/api/form.api';
+
   export default {
     name: 'Form',
     data() {
       return {
         id: 0,
-        fields: [],
-        actions: [],
+        form: {
+          fields: [],
+          actions: [],
+        },
+        api: null,
       }
+    },
+    created() {
+      this.api = new FormApi(this.$axios, this.$router.currentRoute.path);
     },
     methods: {
       load(id) {
         this.clear();
         this.id = id;
 
-        for (let i = 1; i <= 3; i++) {
-          this.fields.push({name: `col${i}`, text: `Column ${i}`, value: `Value ${id}.${i}`});
-        }
-
-        this.actions = [
-          {name: 'save', text: 'Save'},
-          {name: 'close', text: 'Close'},
-        ];
+        this.api.load(id).then((result) => {
+          this.form = result.data;
+        });
       },
       clear() {
         this.id = 0;
-        this.fields = [];
-        this.actions = [];
+        this.form = {
+          fields: [],
+          actions: [],
+        };
       },
       save() {
-        return new Promise((resolve, reject) => {
-          resolve();
-        })
+        if (this.id > 0) {
+          return this.api.update(this.id, this.getFieldNameValuePairs());
+        }
+
+        return this.api.create(this.getFieldNameValuePairs());
       },
       delete(id) {
-        return new Promise((resolve, reject) => {
-          resolve();
-        })
+        return this.api.delete(id);
+      },
+      getFieldNameValuePairs() {
+        const result = {};
+
+        for(const field of this.form.fields) {
+          result[field.name] = field.value;
+        }
+
+        return result;
       }
     }
   }
