@@ -15,11 +15,11 @@ export default class FormApi {
   }
 
   create(fields) {
-    return this.api.post(this.url, fields);
+    return this.api.post(this.url, {'fields': fields, 'action': 'save'});
   }
 
   update(id, fields) {
-    return this.api.put(this.createUrl(id), fields);
+    return this.api.put(this.createUrl(id), {'fields': fields, 'action': 'save'});
   }
 
   delete(id) {

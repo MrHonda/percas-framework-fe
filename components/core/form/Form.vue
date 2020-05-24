@@ -63,7 +63,7 @@
         const result = {};
 
         for(const field of this.form.fields) {
-          result[field.name] = field.value;
+          result[field.key] = field.value;
         }
 
         return result;
