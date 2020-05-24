@@ -10,7 +10,7 @@
         <th
           v-for="header in headers"
           :key="header.key"
-          v-html="header.text"
+          v-html="header.name"
         ></th>
         <th></th>
       </tr>
