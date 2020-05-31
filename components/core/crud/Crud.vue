@@ -67,24 +67,22 @@
       },
       handleFormAction({action}) {
         switch (action) {
-          case 'save':
-            this.handleFormSaveAction();
-            break;
           case 'close':
             this.handleFormCloseAction();
             break;
           default:
-            this.$emit('formAction', {action});
+            this.submitForm();
+            // this.$emit('formAction', {action});
             break;
         }
       },
-      handleFormSaveAction() {
-        this.modalForm.form.save().then((result) => {
-          console.log(result);
-          this.modalForm.hide();
-          this.grid.load();
-        });
-      },
+      // handleFormSaveAction() {
+      //   this.modalForm.form.save().then((result) => {
+      //     console.log(result);
+      //     this.modalForm.hide();
+      //     this.grid.load();
+      //   });
+      // },
       handleFormCloseAction() {
         this.modalForm.hide();
       },

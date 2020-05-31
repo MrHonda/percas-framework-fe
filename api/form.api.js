@@ -14,6 +14,18 @@ export default class FormApi {
     return this.api.get(this.createUrl(id));
   }
 
+  submit(id, fields, action) {
+    const data = new FormData();
+
+    for(const key in fields) {
+      data.set('fields[' + key + ']', fields[key]);
+    }
+
+    data.set('action', action);
+
+    return this.api.post(this.createUrl(id), data);
+  }
+
   create(fields) {
     return this.api.post(this.url, {'fields': fields, 'action': 'save'});
   }

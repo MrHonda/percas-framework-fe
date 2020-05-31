@@ -10,7 +10,7 @@
     <div
       v-for="action in form.actions"
       :key="action.name" v-text="action.text"
-      @click="$emit('action', {action: action.name})"
+      @click="handleAction(action.name)"
     ></div>
   </v-form>
 </template>
@@ -49,6 +49,15 @@
           actions: [],
         };
       },
+      handleAction(action) {
+        this.api?.submit(this.id, this.getFieldNameValuePairs(), action);
+        // $emit('action', {action: action.name});
+      },
+
+
+
+
+
       save() {
         if (this.id > 0) {
           return this.api.update(this.id, this.getFieldNameValuePairs());
