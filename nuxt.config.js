@@ -1,6 +1,4 @@
-import colors from 'vuetify/es5/util/colors';
-import webpack from 'webpack';
-require('dotenv').config();
+import colors from 'vuetify/es5/util/colors'
 
 export default {
   mode: 'universal',
@@ -27,7 +25,6 @@ export default {
   ** Global CSS
   */
   css: [
-    '@/assets/app.scss'
   ],
   /*
   ** Plugins to load before mounting the App
@@ -38,25 +35,22 @@ export default {
   ** Nuxt.js dev-modules
   */
   buildModules: [
-    '@nuxtjs/vuetify',
+    // Doc: https://github.com/nuxt-community/eslint-module
+    '@nuxtjs/eslint-module',
+    '@nuxtjs/vuetify'
   ],
   /*
   ** Nuxt.js modules
   */
   modules: [
     // Doc: https://axios.nuxtjs.org/usage
-    '@nuxtjs/axios',
-    '@nuxtjs/pwa',
-    // Doc: https://github.com/nuxt-community/dotenv-module
-    '@nuxtjs/dotenv',
+    '@nuxtjs/axios'
   ],
   /*
   ** Axios module configuration
   ** See https://axios.nuxtjs.org/options
   */
   axios: {
-    baseURL: process.env.API_URL,
-    credentials: true
   },
   /*
   ** vuetify module configuration
@@ -65,7 +59,7 @@ export default {
   vuetify: {
     customVariables: ['~/assets/variables.scss'],
     theme: {
-      dark: false,
+      dark: true,
       themes: {
         dark: {
           primary: colors.blue.darken2,
@@ -76,9 +70,6 @@ export default {
           error: colors.deepOrange.accent4,
           success: colors.green.accent3
         }
-      },
-      options: {
-        customProperties: true
       }
     }
   },
@@ -90,14 +81,6 @@ export default {
     ** You can extend webpack config here
     */
     extend (config, ctx) {
-    },
-    plugins: [
-      new webpack.ProvidePlugin({
-        '_': 'lodash'
-      })
-    ]
-  },
-  router: {
-    middleware: 'router'
+    }
   }
 }
