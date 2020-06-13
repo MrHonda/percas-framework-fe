@@ -9,7 +9,7 @@
 
 <script>
 
-import Grid from '~/components/grid/Grid';
+import Grid from '~/components/core/grid/Grid';
 
 export default {
   components: {Grid},

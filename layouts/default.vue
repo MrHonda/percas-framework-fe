@@ -14,8 +14,8 @@
 </template>
 
 <script>
-import Navbar from '../components/layouts/default/Navbar';
-import Sidebar from '../components/layouts/default/Sidebar';
+import Navbar from '~/components/layouts/default/Navbar';
+import Sidebar from '~/components/layouts/default/Sidebar';
 import { mapGetters } from 'vuex';
 
 export default {
