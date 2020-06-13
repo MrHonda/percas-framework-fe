@@ -14,12 +14,13 @@
 </template>
 
 <script>
-import Navbar from '~/components/layouts/default/Navbar';
-import Sidebar from '~/components/layouts/default/Sidebar';
+import Navbar from '@/components/layouts/default/Navbar';
+import Sidebar from '@/components/layouts/default/Sidebar';
 import { mapGetters } from 'vuex';
 
 export default {
   components: {Sidebar, Navbar},
+  name: 'DefaultLayout',
   computed: {
     modules() {
       return this.$store.state.modules;

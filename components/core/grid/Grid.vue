@@ -23,6 +23,7 @@
             v-for="action in item.actions"
             :key="action.key"
             link
+            @click="$emit('row-action', {action: action.key, id: item.id})"
           >
             <v-list-item-icon>
               <v-icon v-text="action.icon" />
