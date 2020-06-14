@@ -4,39 +4,50 @@
     :headers="grid.headers"
     :items="grid.rows"
     :loading="loading"
+    item-key="id.value"
   >
-    <template v-slot:item.actions="{ item }">
-      <v-menu
-        v-if="item.actions && item.actions.length"
-        offset-y
-        left
-      >
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn
-            v-bind="attrs"
-            v-on="on"
-            icon
-            :disabled="loading"
-          >
-            <v-icon>mdi-dots-vertical</v-icon>
-          </v-btn>
-        </template>
-        <v-list>
-          <v-list-item
-            v-for="action in item.actions"
-            :key="action.key"
-            link
-            @click="onRowAction(action.key, item.id)"
-          >
-            <v-list-item-icon>
-              <v-icon v-text="action.icon" />
-            </v-list-item-icon>
-            <v-list-item-content>
-              <v-list-item-title v-text="action.name" />
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
-      </v-menu>
+    <template
+      v-for="slotName in colSlots"
+      v-slot:[slotName]="{ item, value }"
+    >
+      <template v-if="value.type === 'hidden'"></template>
+      <template v-else-if="value.type === 'actions'">
+        <v-menu
+          v-if="value && value.value.length"
+          offset-y
+          left
+        >
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn
+              v-bind="attrs"
+              v-on="on"
+              icon
+              :disabled="loading"
+            >
+              <v-icon>mdi-dots-vertical</v-icon>
+            </v-btn>
+          </template>
+          <v-list>
+            <v-list-item
+              v-for="action in value.value"
+              :key="action.key"
+              link
+              @click="onRowAction(action.key, item.id.value)"
+            >
+              <v-list-item-icon>
+                <v-icon v-text="action.icon" />
+              </v-list-item-icon>
+              <v-list-item-content>
+                <v-list-item-title v-text="action.name" />
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+      </template>
+      <template v-else>
+        {{value.value}}
+      </template>
+
     </template>
   </v-data-table>
 </template>
@@ -47,10 +58,22 @@ export default {
   data() {
     return {
       grid: null,
-      loading: false
+      loading: false,
+      test: 'item.name',
+      test2: {'name': 'Test'}
     };
   },
+  computed: {
+    colSlots() {
+      const slots = [];
+      for (const header of this.grid.headers) {
+        slots.push('item.' + header.value);
+      }
+      return slots;
+    }
+  },
   created() {
+    console.log(this.test2[this.test]);
     this.reset();
     this.load();
   },
