@@ -1,7 +1,9 @@
 <template>
   <v-data-table
-    :headers="headers"
-    :items="rows"
+    v-if="grid"
+    :headers="grid.headers"
+    :items="grid.rows"
+    :loading="loading"
   >
     <template v-slot:item.actions="{ item }">
       <v-menu
@@ -14,6 +16,7 @@
             v-bind="attrs"
             v-on="on"
             icon
+            :disabled="loading"
           >
             <v-icon>mdi-dots-vertical</v-icon>
           </v-btn>
@@ -43,74 +46,51 @@ export default {
   name: 'ModulesGrid',
   data() {
     return {
-      headers: [],
-      rows: []
+      grid: null,
+      loading: false
     };
   },
   created() {
-    this.headers = [
-      {
-        text: 'Name',
-        value: 'name'
-      },
-      {
-        text: 'Link',
-        value: 'link'
-      },
-      {
-        text: '',
-        value: 'actions',
-        width: 100
-      }
-    ];
-    this.rows = [
-      {
-        id: 1,
-        name: 'Module 1',
-        link: 'module-1',
-        actions: [
-          {
-            'key': 'edit',
-            'name': 'Edit',
-            'icon': 'mdi-pencil'
-          },
-          {
-            'key': 'delete',
-            'name': 'Delete',
-            'icon': 'mdi-delete'
-          }
-        ]
-      },
-      {
-        id: 2,
-        name: 'Module 2',
-        link: 'module-2',
-        actions: [
-          {
-            'key': 'edit',
-            'name': 'Edit',
-            'icon': 'mdi-pencil'
-          },
-          {
-            'key': 'delete',
-            'name': 'Delete',
-            'icon': 'mdi-delete'
-          }
-        ]
-      }
-    ];
+    this.reset();
+    this.load();
   },
   methods: {
+    load() {
+      this.loading = true;
+      this.$axios.$get('http://localhost:8000' + this.$route.path).then(response => {
+        this.grid = response;
+        this.loading = false;
+      });
+    },
+    reset() {
+      this.grid = {
+        headers: [],
+        rows: []
+      }
+    },
     onRowAction(action, id) {
       switch (action) {
         case 'edit':
-          const path = `${_.trimEnd(this.$route.path, '/')}/${id}`;
-          this.$router.push(path);
+          this.handleEditRowAction(id);
           break;
         case 'delete':
+          this.handleDeleteRowAction(id);
           break;
       }
-      console.log(action, id);
+    },
+    handleEditRowAction(id) {
+      const path = `${_.trimEnd(this.$route.path, '/')}/${id}`;
+      this.$router.push(path);
+    },
+    handleDeleteRowAction(id) {
+      const confirm = window.confirm('Delete?');
+      if (confirm) {
+        this.loading = true;
+        const path = `${_.trimEnd(this.$route.path, '/')}/${id}`;
+        this.$axios.$delete('http://localhost:8000' + path).then(() => {
+          this.load();
+        });
+      }
     }
   }
 }

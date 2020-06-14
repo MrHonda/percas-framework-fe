@@ -1,14 +1,16 @@
 <template>
-  <v-form>
+  <v-form
+    v-if="form"
+  >
     <v-row>
       <v-col
         cols="12"
         md="6"
       >
         <v-text-field
-          :label="fields.name.name"
-          v-model="fields.name.value"
-          :prepend-inner-icon="fields.name.icon"
+          :label="form.fields.name.name"
+          v-model="form.fields.name.value"
+          :prepend-inner-icon="form.fields.name.icon"
           outlined
         />
       </v-col>
@@ -17,9 +19,9 @@
         md="6"
       >
         <v-text-field
-          :label="fields.link.name"
-          v-model="fields.link.value"
-          :prepend-inner-icon="fields.link.icon"
+          :label="form.fields.link.name"
+          v-model="form.fields.link.value"
+          :prepend-inner-icon="form.fields.link.icon"
           outlined
         />
       </v-col>
@@ -31,7 +33,7 @@
         cols="auto"
       >
         <v-btn
-          v-for="button in buttons"
+          v-for="button in form.buttons"
           :key="button.key"
           :color="button.color"
           :outlined="button.outlined"
@@ -51,56 +53,47 @@ export default {
   name: 'ModulesForm',
   data() {
     return {
-      fields: {},
-      buttons: {},
-      id: null
+      id: null,
+      form: null
     };
   },
   created() {
     this.id = this.$route.params.id;
-    this.fields = {
-      'name': {
-        key: 'name',
-        name: 'Name',
-        icon: 'mdi-tag',
-        value: 'Module ' + this.id
-      },
-      'link': {
-        key: 'link',
-        name: 'Link',
-        icon: 'mdi-tag',
-        value: 'module-' + this.id
-      }
-    }
-    this.buttons = {
-      'save': {
-        key: 'save',
-        name: 'Save',
-        icon: 'mdi-content-save',
-        color: 'primary',
-        outlined: false
-      },
-      'cancel': {
-        key: 'cancel',
-        name: 'Cancel',
-        icon: 'mdi-cancel',
-        color: 'default',
-        outlined: true
-      }
-    }
+    this.$axios.$get('http://localhost:8000' + this.$route.path).then(response => {
+      this.form = response;
+    });
   },
   methods: {
-    onButtonClick(key) {
-      switch (key) {
+    onButtonClick(action) {
+      switch (action) {
         case 'save':
+          this.save(action);
           break;
         case 'cancel':
-          const pathParts = (_.trim(this.$route.path, '/')).split('/');
-          pathParts.pop();
-          this.$router.push('/' + pathParts.join('/'));
+          this.cancel();
           break;
       }
-      console.log(key);
+    },
+    save(action = 'save') {
+      const data = {};
+      for (const key in this.form.fields) {
+        if (this.form.fields.hasOwnProperty(key)) {
+          const field = this.form.fields[key];
+          data[field.key] = field.value;
+        }
+      }
+      const request = {
+        action: action,
+        fields: data
+      };
+      this.$axios.$post('http://localhost:8000' + this.$route.path, request).then(() => {
+        this.cancel();
+      });
+    },
+    cancel() {
+      const pathParts = (_.trim(this.$route.path, '/')).split('/');
+      pathParts.pop();
+      this.$router.push('/' + pathParts.join('/'));
     }
   }
 }
