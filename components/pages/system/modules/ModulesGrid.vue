@@ -10,57 +10,32 @@
       v-for="slotName in colSlots"
       v-slot:[slotName]="{ item, value }"
     >
-      <template v-if="value.type === 'hidden'"></template>
-      <template v-else-if="value.type === 'actions'">
-        <v-menu
-          v-if="value && value.value.length"
-          offset-y
-          left
-        >
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              v-bind="attrs"
-              v-on="on"
-              icon
-              :disabled="loading"
-            >
-              <v-icon>mdi-dots-vertical</v-icon>
-            </v-btn>
-          </template>
-          <v-list>
-            <v-list-item
-              v-for="action in value.value"
-              :key="action.key"
-              link
-              @click="onRowAction(action.key, item.id.value)"
-            >
-              <v-list-item-icon>
-                <v-icon v-text="action.icon" />
-              </v-list-item-icon>
-              <v-list-item-content>
-                <v-list-item-title v-text="action.name" />
-              </v-list-item-content>
-            </v-list-item>
-          </v-list>
-        </v-menu>
-      </template>
-      <template v-else>
-        {{value.value}}
-      </template>
-
+      <ActionsColumn
+        v-if="value.type === 'actions'"
+        :id="item.id.value"
+        :actions="value.value"
+        :disabled="loading"
+        v-on:rowAction="onRowAction"
+      />
+      <TextColumn
+        v-else-if="value.type !== 'hidden'"
+        :value="value.value"
+      />
     </template>
   </v-data-table>
 </template>
 
 <script>
+import TextColumn from '@/components/core/grid/columns/TextColumn';
+import ActionsColumn from '@/components/core/grid/columns/ActionsColumn';
+
 export default {
   name: 'ModulesGrid',
+  components: {ActionsColumn, TextColumn},
   data() {
     return {
       grid: null,
       loading: false,
-      test: 'item.name',
-      test2: {'name': 'Test'}
     };
   },
   computed: {
@@ -73,7 +48,6 @@ export default {
     }
   },
   created() {
-    console.log(this.test2[this.test]);
     this.reset();
     this.load();
   },
@@ -91,7 +65,7 @@ export default {
         rows: []
       }
     },
-    onRowAction(action, id) {
+    onRowAction({action, id}) {
       switch (action) {
         case 'edit':
           this.handleEditRowAction(id);
