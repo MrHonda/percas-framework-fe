@@ -1,56 +1,33 @@
 <template>
-  <v-form
-    v-if="form"
-  >
+  <v-form v-if="form">
     <v-row>
-      <v-col
-        cols="12"
-        md="6"
-      >
-        <v-text-field
-          :label="form.fields.name.name"
-          v-model="form.fields.name.value"
-          :prepend-inner-icon="form.fields.name.icon"
-          outlined
-        />
+      <v-col cols="12" md="6">
+        <Field :field="form.fields.name" />
       </v-col>
-      <v-col
-        cols="12"
-        md="6"
-      >
-        <v-text-field
-          :label="form.fields.link.name"
-          v-model="form.fields.link.value"
-          :prepend-inner-icon="form.fields.link.icon"
-          outlined
-        />
+      <v-col cols="12" md="6">
+        <Field :field="form.fields.link" />
       </v-col>
     </v-row>
-    <v-row
-      justify="end"
-    >
-      <v-col
-        cols="auto"
-      >
-        <v-btn
+    <v-row justify="end">
+      <v-col cols="auto">
+        <FormButtton
           v-for="button in form.buttons"
           :key="button.key"
-          :color="button.color"
-          :outlined="button.outlined"
-          class="ml-2"
-          @click="onButtonClick(button.key)"
-        >
-          <v-icon left v-text="button.icon" />
-          {{button.name}}
-        </v-btn>
+          :button="button"
+          @click="onButtonClick"
+        />
       </v-col>
     </v-row>
   </v-form>
 </template>
 
 <script>
+import Field from '@/components/core/form/fields/Field';
+import FormButtton from '@/components/core/form/FormButtton';
+
 export default {
   name: 'ModulesForm',
+  components: {FormButtton, Field},
   data() {
     return {
       id: null,
