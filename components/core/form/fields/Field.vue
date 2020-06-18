@@ -1,6 +1,7 @@
 <template>
   <TextField
     :field="field"
+    v-on="$listeners"
   />
 </template>
 

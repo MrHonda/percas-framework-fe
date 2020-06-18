@@ -15,12 +15,11 @@
 
 <script>
 import Field from '@/components/core/form/fields/Field';
-import FormButtton from '@/components/core/form/FormButtton';
 import Form from '@/components/core/form/Form';
 
 export default {
   name: 'ModulesForm',
-  components: {Form, FormButtton, Field},
+  components: {Form, Field},
   data() {
     return {
       path: '/system/modules',

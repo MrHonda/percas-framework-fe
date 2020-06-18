@@ -5,6 +5,7 @@
     v-model="field.value"
     :prepend-inner-icon="field.icon"
     outlined
+    v-on="$listeners"
   />
 </template>
 
