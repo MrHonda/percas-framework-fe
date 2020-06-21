@@ -33,7 +33,7 @@
             <v-btn
               color="primary"
               class="ml-2"
-              @click="reload"
+              @click="applyFilters"
             >
               <v-icon left>mdi-magnify</v-icon>
               Filter
@@ -178,6 +178,10 @@ export default {
           this.load();
         });
       }
+    },
+    applyFilters() {
+      this.grid.options.page = 1;
+      this.reload();
     },
     clearFilters() {
       this.loading = true;
