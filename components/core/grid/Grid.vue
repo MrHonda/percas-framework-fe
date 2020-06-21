@@ -1,10 +1,11 @@
 <template>
   <v-data-table
-    v-if="grid"
     :headers="grid.headers"
     :items="grid.rows"
     :loading="loading"
     item-key="id.value"
+    :options.sync="grid.options"
+    :server-items-length="grid.totalRows"
   >
     <template v-slot:top>
       <v-container v-if="grid.filters">
@@ -32,7 +33,7 @@
             <v-btn
               color="primary"
               class="ml-2"
-              @click="applyFilters"
+              @click="reload"
             >
               <v-icon left>mdi-magnify</v-icon>
               Filter
@@ -86,6 +87,7 @@ export default {
     return {
       grid: null,
       loading: false,
+      loaded: false
     };
   },
   computed: {
@@ -95,6 +97,16 @@ export default {
         slots.push('item.' + header.value);
       }
       return slots;
+    }
+  },
+  watch: {
+    'grid.options': {
+      handler() {
+        if (this.loaded && !this.loading) {
+          this.reload();
+        }
+      },
+      deep: true,
     },
   },
   created() {
@@ -106,13 +118,40 @@ export default {
       this.loading = true;
       this.$axios.$get('http://localhost:8000' + this.path).then(response => {
         this.grid = response;
-        this.loading = false;
+        this.$nextTick(() => {
+          this.loaded = true;
+          this.loading = false;
+        });
+      });
+    },
+    reload() {
+      this.loading = true;
+      this.$axios.$post('http://localhost:8000' + this.path, {
+        filters: this.grid.filters,
+        options: this.grid.options
+      }).then(response => {
+        this.grid = response;
+        this.$nextTick(() => {
+          this.loading = false;
+        });
       });
     },
     reset() {
       this.grid = {
         headers: [],
-        rows: []
+        rows: [],
+        filters: [],
+        totalRows: 0,
+        options: {
+          page: 1,
+          itemsPerPage: 1,
+          sortBy: [],
+          sortDesc: [],
+          groupBy: [],
+          groupDesc: [],
+          multiSort: false,
+          mustSort: false
+        }
       }
     },
     getRowPath(id) {
@@ -139,13 +178,6 @@ export default {
           this.load();
         });
       }
-    },
-    applyFilters() {
-      this.loading = true;
-      this.$axios.$post('http://localhost:8000' + this.path, {filters: this.grid.filters}).then(response => {
-        this.grid = response;
-        this.loading = false;
-      });
     },
     clearFilters() {
       this.loading = true;
